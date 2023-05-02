@@ -51,7 +51,7 @@ const Login:React.FC<LoginProps> = () => {
       />
       <Input 
         required 
-        name="passowrd" 
+        name="password" 
         placeholder="password" 
         type="password"
         mb={2} 
