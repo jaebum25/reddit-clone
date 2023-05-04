@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { HiLockClosed } from 'react-icons/hi'
 import { BsFillEyeFill, BsFillPersonFill } from 'react-icons/bs'
 import { auth, firestore } from '@/src/firebase/clientApp';
-import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { doc, getDoc, runTransaction, serverTimestamp, setDoc } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 type CreateCommunityModalProps = {
@@ -47,18 +47,27 @@ const CreateCommunityModal:React.FC<CreateCommunityModalProps> = ({ open, handle
       // Check name is not taken
       // If valid name, create community
       const communityDocRef = doc(firestore, 'communities', communityName)
+
+      await runTransaction(firestore, async (transaction) => {
       // Check if community exists in db
       const communityDoc = await getDoc(communityDocRef)
       if (communityDoc.exists()) {
         throw new Error(`Sorry, r/${communityName} is taken. Try another.`)
       }
       // Create community
-      await setDoc(communityDocRef, {
+      await transaction.set(communityDocRef, {
         creatorId: user?.uid,
         createdAt: serverTimestamp(),
         numberOfMembers: 1,
         privacyType: communityType
+      });
+
+      // create communitySnippet on user
+      transaction.set(doc(firestore, `users/${user?.uid}/communitySnippets`, communityName), {
+        communityId: communityName,
+        isModerator: true,
       })
+    })
     } catch (error: any) {
       console.log('handleCreateCommunity error', error)
       setError(error.message)
