@@ -16,7 +16,7 @@ import {
   where,
 } from "firebase/firestore";
 import usePosts from "../hooks/usePosts";
-import { Post } from "../atoms/postsAtoms";
+import { Post, PostVote } from "../atoms/postsAtoms";
 import PostLoader from "../components/Posts/PostForm/PostLoader";
 import { Stack } from "@chakra-ui/react";
 import PostItem from "../components/Posts/PostItem";
@@ -90,7 +90,26 @@ export default function Home() {
     setLoading(false);
   };
 
-  const getUserPostVotes = () => {};
+  const getUserPostVotes = async () => {
+    try {
+      const postIds = postStateValue.posts.map((post) => post.id);
+      const postVotesQuery = query(
+        collection(firestore, `users/${user?.uid}/postVotes`),
+        where("postId", "in", postIds)
+      );
+      const postVoteDocs = await getDocs(postVotesQuery);
+      const postVotes = postVoteDocs.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setPostStateValue((prev) => ({
+        ...prev,
+        postVotes: postVotes as PostVote[],
+      }));
+    } catch (error) {
+      console.log("getUserPostVotes error", error);
+    }
+  };
 
   // useEffects
 
@@ -101,6 +120,17 @@ export default function Home() {
   useEffect(() => {
     if (!user && !loadingUser) buildNoUserHomeFeed();
   }, [user, loadingUser]);
+
+  useEffect(() => {
+    if (user && postStateValue.posts.length) getUserPostVotes();
+
+    return () => {
+      setPostStateValue((prev) => ({
+        ...prev,
+        postVotes: [],
+      }));
+    };
+  }, [user, postStateValue.posts]);
 
   return (
     <PageContent>
