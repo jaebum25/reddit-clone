@@ -57,9 +57,8 @@ const formTabs: TabItem[] = [
   },
 ];
 
-export type TabItem = {
+export type TabItemProps = {
   title: string;
-  // icon: typeof Icon.arguments;
   icon: React.ElementType;
 };
 
@@ -91,6 +90,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
       numberOfComments: 0,
       voteStatus: 0,
       createdAt: serverTimestamp() as Timestamp,
+      id: "",
     };
 
     setLoading(true);
