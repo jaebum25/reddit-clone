@@ -1,10 +1,6 @@
 import React from "react";
 import { Flex, Icon, Text } from "@chakra-ui/react";
-
-export type TabItem = {
-  title: string;
-  icon: React.ElementType;
-};
+import { TabItem } from "./NewPostForm";
 
 type TabItemProps = {
   item: TabItem;
