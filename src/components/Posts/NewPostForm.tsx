@@ -26,10 +26,9 @@ import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
 import ImageUpload from "./PostForm/ImageUpload";
 import TextInputs from "./PostForm/TextInputs";
-import TabItem from "./TabItem";
+import { TabItem, TabItemProps } from "./TabItem";
 
 type NewPostFormProps = {
-  communityId: string;
   user: User;
   communityImageURL?: string;
 };
@@ -57,14 +56,8 @@ const formTabs: TabItem[] = [
   },
 ];
 
-export type TabItemProps = {
-  title: string;
-  icon: React.ElementType;
-};
-
 const NewPostForm: React.FC<NewPostFormProps> = ({
   user,
-  communityId,
   communityImageURL,
 }) => {
   const router = useRouter();
@@ -90,7 +83,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
       numberOfComments: 0,
       voteStatus: 0,
       createdAt: serverTimestamp() as Timestamp,
-      id: "",
     };
 
     setLoading(true);
