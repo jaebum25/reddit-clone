@@ -29,6 +29,7 @@ import TextInputs from "./PostForm/TextInputs";
 import TabItem from "./TabItem";
 
 type NewPostFormProps = {
+  communityId: string;
   user: User;
   communityImageURL?: string;
 };
@@ -58,11 +59,13 @@ const formTabs: TabItem[] = [
 
 export type TabItem = {
   title: string;
-  icon: typeof Icon.arguments;
+  // icon: typeof Icon.arguments;
+  icon: React.ElementType;
 };
 
 const NewPostForm: React.FC<NewPostFormProps> = ({
   user,
+  communityId,
   communityImageURL,
 }) => {
   const router = useRouter();
