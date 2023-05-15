@@ -7,7 +7,7 @@ import PageContent from "@/src/components/Layout/PageContent";
 import Posts from "@/src/components/Posts/Posts";
 import { firestore } from "@/src/firebase/clientApp";
 import { doc, getDoc } from "firebase/firestore";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import React, { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import safeJsonStringify from "safe-json-stringify";
@@ -16,8 +16,7 @@ type CommunityPageProps = {
   communityData: Community;
 };
 
-const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
-  console.log("here is data", communityData);
+const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   const setCommunityStateValue = useSetRecoilState(communityState);
 
   useEffect(() => {
@@ -47,9 +46,9 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
   );
 };
 
-export async function getServerSideProps(context: GetServerSideProps) {
-  // get community dat and pass it to client
-
+export const getServerSideProps: GetServerSideProps<
+  CommunityPageProps
+> = async (context) => {
   try {
     const communityDocRef = doc(
       firestore,
@@ -63,13 +62,17 @@ export async function getServerSideProps(context: GetServerSideProps) {
           ? JSON.parse(
               safeJsonStringify({ id: communityDoc.id, ...communityDoc.data() })
             )
-          : "",
+          : null,
       },
     };
   } catch (error) {
-    // could add error page here
     console.log("getServerSideProps error", error);
+    return {
+      props: {
+        communityData: null,
+      },
+    };
   }
-}
+};
 
 export default CommunityPage;
