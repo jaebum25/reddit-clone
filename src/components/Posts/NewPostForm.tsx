@@ -26,7 +26,7 @@ import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
 import ImageUpload from "./PostForm/ImageUpload";
 import TextInputs from "./PostForm/TextInputs";
-import { TabItem, TabItemProps } from "./TabItem";
+import { TabItem } from "./TabItem";
 
 type NewPostFormProps = {
   user: User;
